@@ -1,37 +1,39 @@
-const questions = [
-  "What's your name?",
-  "What would you rather be doing?",
-  "What's your favorite coding language?"
-];
+const readline = require('readline');
 
-const ask = (i=0) => {
-  process.stdout.write(`\n\n\n ${questions[i]}`);
-  process.stdout.write(` > `);
-};
-
-ask();
-
-const answers = [];
-process.stdin.on("data", data => {
-  answers.push(data.toString().trim());
-
-  if (answers.length < questions.length){
-    ask(answers.length);    
-  }else{
-    process.exit();
-  }
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
 });
 
-process.on("exit", () => {
+const questions = [
+  "What is your name? ",
+  "Where do you live? ",
+  "What are you doing with node js? "
+];
 
-  const [name, activity, lang] = answers;
-  console.log(`
+const collectAnswers = (questions, done) => {
+  const answers = [];
+  const [firstQuestion] = questions;
   
-Thank you for you answers.
+  const questionAnswered = answer => {
+    // stores all answers
+    answers.push(answer);
+    // asks second question through last
+    if (answers.length < questions.length){
+      rl.question(questions[answers.length], questionAnswered);
+    } else {
+      // all questions answers
+      done(answers);
+    }
 
-Go ${activity} ${name} you can write ${lang} code later!!!
+  }
 
+  // asks first question then callback function continues the remaining
+  rl.question(firstQuestion, questionAnswered);
+};
 
-  `);
-
-})
+collectAnswers(questions, answers => {
+  console.log("Thank you for your answers. ");
+  console.log(answers);
+  process.exit();
+});
