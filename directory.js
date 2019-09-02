@@ -12,4 +12,3 @@ if (fs.existsSync("storage-files")){
     console.log("Dir created");
   });
 }
-
